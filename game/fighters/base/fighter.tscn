@@ -1,0 +1,70 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://fighters/base/fighter.gd" id="1"]
+[ext_resource type="Script" path="res://core/state_machine/state_machine.gd" id="2"]
+[ext_resource type="Script" path="res://core/combat/hurtbox.gd" id="3"]
+[ext_resource type="Script" path="res://core/combat/hitbox.gd" id="4"]
+[ext_resource type="Script" path="res://core/combat/combo_manager.gd" id="5"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleBody"]
+radius = 29.0
+height = 116.0
+
+[sub_resource type="RectangleShape2D" id="RectangleHit"]
+size = Vector2(72, 46)
+
+[node name="Fighter" type="CharacterBody2D"]
+script = ExtResource("1")
+collision_layer = 1
+collision_mask = 1
+floor_snap_length = 8.0
+
+[node name="BodyCollision" type="CollisionShape2D" parent="."]
+position = Vector2(0, -58)
+shape = SubResource("CapsuleBody")
+
+[node name="BodyVisual" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-28, -112, 28, -112, 34, -28, 22, 0, -22, 0, -34, -28)
+color = Color(0.21, 0.66, 0.88, 1)
+
+[node name="SpriteVisual" type="AnimatedSprite2D" parent="."]
+visible = false
+position = Vector2(0, -56)
+z_index = 1
+
+[node name="FaceMark" type="Polygon2D" parent="BodyVisual"]
+polygon = PackedVector2Array(-11, -91, 11, -91, 11, -74, -11, -74)
+color = Color(1, 0.87, 0.62, 1)
+
+[node name="AccentOne" type="Polygon2D" parent="BodyVisual"]
+polygon = PackedVector2Array(-19, -101, 20, -101, 20, -94, -19, -94)
+color = Color(1, 0.83, 0.28, 1)
+
+[node name="AccentTwo" type="Polygon2D" parent="BodyVisual"]
+polygon = PackedVector2Array(-27, -72, -17, -80, 28, -35, 23, -24)
+color = Color(1, 0.83, 0.28, 1)
+
+[node name="AccentThree" type="Polygon2D" parent="BodyVisual"]
+polygon = PackedVector2Array(19, -99, 43, -91, 20, -88)
+color = Color(1, 0.83, 0.28, 1)
+
+[node name="Hurtbox" type="Area2D" parent="."]
+position = Vector2(0, -58)
+script = ExtResource("3")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox"]
+shape = SubResource("CapsuleBody")
+
+[node name="Hitbox" type="Area2D" parent="."]
+script = ExtResource("4")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox"]
+shape = SubResource("RectangleHit")
+debug_color = Color(1, 0.12, 0.12, 0.5)
+
+[node name="StateMachine" type="Node" parent="."]
+script = ExtResource("2")
+
+[node name="ComboManager" type="Node" parent="."]
+script = ExtResource("5")
+

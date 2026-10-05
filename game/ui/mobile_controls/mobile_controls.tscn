@@ -1,0 +1,77 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://ui/mobile_controls/mobile_controls.gd" id="1"]
+
+[node name="MobileControls" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1")
+
+[node name="Left" type="Button" parent="."]
+offset_left = 22.0
+offset_top = 485.0
+offset_right = 112.0
+offset_bottom = 575.0
+text = "LEFT"
+
+[node name="Right" type="Button" parent="."]
+offset_left = 122.0
+offset_top = 485.0
+offset_right = 212.0
+offset_bottom = 575.0
+text = "RIGHT"
+
+[node name="Jump" type="Button" parent="."]
+offset_left = 72.0
+offset_top = 390.0
+offset_right = 162.0
+offset_bottom = 480.0
+text = "UP"
+
+[node name="Crouch" type="Button" parent="."]
+offset_left = 72.0
+offset_top = 580.0
+offset_right = 162.0
+offset_bottom = 640.0
+text = "DOWN"
+
+[node name="LP" type="Button" parent="."]
+offset_left = 848.0
+offset_top = 400.0
+offset_right = 938.0
+offset_bottom = 490.0
+text = "LP"
+
+[node name="RP" type="Button" parent="."]
+offset_left = 950.0
+offset_top = 370.0
+offset_right = 1040.0
+offset_bottom = 460.0
+text = "RP"
+
+[node name="LK" type="Button" parent="."]
+offset_left = 820.0
+offset_top = 505.0
+offset_right = 910.0
+offset_bottom = 595.0
+text = "LK"
+
+[node name="RK" type="Button" parent="."]
+offset_left = 930.0
+offset_top = 480.0
+offset_right = 1020.0
+offset_bottom = 570.0
+text = "RK"
+
+[node name="Block" type="Button" parent="."]
+offset_left = 1040.0
+offset_top = 470.0
+offset_right = 1135.0
+offset_bottom = 575.0
+text = "BLOCK"
+

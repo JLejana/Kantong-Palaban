@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="AttackData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://core/combat/attack_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"lp"
+display_name = "Left Punch"
+input_command = PackedStringArray("lp")
+damage = 5
+startup_frames = 5
+active_frames = 3
+recovery_frames = 7
+hit_stun_frames = 14
+block_stun_frames = 8
+knockback = Vector2(170, 0)
+hitbox_size = Vector2(70, 42)
+hitbox_offset = Vector2(55, -65)
+animation_name = &"lp"
+

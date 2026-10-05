@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="AttackData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://core/combat/attack_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"rk"
+display_name = "Round Kick"
+input_command = PackedStringArray("rk")
+damage = 14
+startup_frames = 12
+active_frames = 5
+recovery_frames = 16
+hit_stun_frames = 25
+block_stun_frames = 14
+knockback = Vector2(320, 0)
+launch_force = 190.0
+causes_knockdown = true
+hitbox_size = Vector2(94, 45)
+hitbox_offset = Vector2(70, -45)
+animation_name = &"rk"
+

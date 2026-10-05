@@ -1,0 +1,56 @@
+extends Node
+
+var failures: Array[String] = []
+
+func _ready() -> void:
+	_run()
+
+func _run() -> void:
+	var packed := load("res://match/fight_scene.tscn") as PackedScene
+	_assert(packed != null, "fight scene loads")
+	if packed == null:
+		get_tree().quit(1)
+		return
+	var scene := packed.instantiate()
+	add_child(scene)
+	await get_tree().physics_frame
+
+	var first := scene.get_node("FighterA") as Fighter
+	var second := scene.get_node("FighterB") as Fighter
+	var rounds := scene.get_node("RoundManager") as RoundManager
+	var player_one_controls := scene.get_node("HUD/PlayerOneControls") as Label
+	var player_two_controls := scene.get_node("HUD/PlayerTwoControls") as Label
+	_assert("MOVE" in player_one_controls.text and "SPECIAL" in player_one_controls.text, "player one controls are shown on the fight HUD")
+	_assert("MOVE" in player_two_controls.text and "SPECIAL" in player_two_controls.text, "player two controls are shown on the fight HUD")
+	second.ai_controlled = false
+	first.global_position = Vector2(500.0, 548.0)
+	second.global_position = Vector2(585.0, 548.0)
+	second.health = 5
+	rounds.phase = &"fight"
+	first.input_enabled = true
+	second.input_enabled = false
+
+	Input.action_press("p1_rp")
+	await get_tree().physics_frame
+	Input.action_release("p1_rp")
+	for _frame in range(30):
+		await get_tree().physics_frame
+
+	_assert(second.health == 0, "active attack frames damage the opponent")
+	_assert(second.is_ko(), "lethal damage enters KO state")
+	_assert(rounds.player_one_rounds == 1, "KO awards the round")
+	Input.action_release("p1_rp")
+
+	if failures.is_empty():
+		print("COMBAT_SMOKE_TEST: PASS")
+		get_tree().quit(0)
+	else:
+		for failure in failures:
+			push_error(failure)
+		get_tree().quit(1)
+
+func _assert(condition: bool, description: String) -> void:
+	if not condition:
+		failures.append("COMBAT_SMOKE_TEST failed: " + description)
+
+

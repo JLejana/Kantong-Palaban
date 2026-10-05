@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="AttackData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://core/combat/attack_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"forward_rp"
+display_name = "Court Crusher"
+input_command = PackedStringArray("forward", "rp")
+damage = 17
+startup_frames = 13
+active_frames = 5
+recovery_frames = 18
+hit_stun_frames = 28
+block_stun_frames = 15
+knockback = Vector2(360, 0)
+launch_force = 220.0
+causes_knockdown = true
+hitbox_size = Vector2(112, 55)
+hitbox_offset = Vector2(78, -57)
+animation_name = &"court_crusher"

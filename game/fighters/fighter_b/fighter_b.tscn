@@ -1,0 +1,17 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="PackedScene" path="res://fighters/base/fighter.tscn" id="1"]
+[ext_resource type="Script" path="res://fighters/fighter_b/fighter_b.gd" id="2"]
+[ext_resource type="Resource" path="res://fighters/fighter_b/fighter_b.tres" id="3"]
+[ext_resource type="Script" path="res://ai/fighter_ai.gd" id="4"]
+
+[node name="FighterB" instance=ExtResource("1")]
+script = ExtResource("2")
+stats = ExtResource("3")
+player_index = 2
+ai_controlled = true
+body_color = Color(0.91, 0.27, 0.24, 1)
+
+[node name="FighterAI" type="Node" parent="." index="6"]
+script = ExtResource("4")
+

@@ -1,0 +1,58 @@
+[gd_resource type="Resource" script_class="FighterStats" load_steps=15 format=3]
+
+[ext_resource type="Script" path="res://fighters/base/fighter_stats.gd" id="1"]
+[ext_resource type="Resource" path="res://data/attacks/lp.tres" id="2"]
+[ext_resource type="Resource" path="res://data/attacks/rp.tres" id="3"]
+[ext_resource type="Resource" path="res://data/attacks/lk.tres" id="4"]
+[ext_resource type="Resource" path="res://data/attacks/rk.tres" id="5"]
+[ext_resource type="Script" path="res://core/combat/attack_data.gd" id="6"]
+[ext_resource type="Resource" path="res://fighters/fighter_a/skyline_strike.tres" id="7"]
+[ext_resource type="Texture2D" path="res://fighters/fighter_a/animations/normalized/idle.png" id="8"]
+[ext_resource type="Texture2D" path="res://fighters/fighter_a/animations/normalized/walk_forward.png" id="9"]
+[ext_resource type="Texture2D" path="res://fighters/fighter_a/animations/normalized/walk_backward.png" id="10"]
+[ext_resource type="Texture2D" path="res://fighters/fighter_a/animations/normalized/crouch.png" id="11"]
+[ext_resource type="Texture2D" path="res://fighters/fighter_a/animations/normalized/block.png" id="12"]
+[ext_resource type="Texture2D" path="res://fighters/fighter_a/animations/normalized/crouch_block.png" id="13"]
+[ext_resource type="Texture2D" path="res://fighters/fighter_a/animations/normalized/jump.png" id="14"]
+
+[resource]
+script = ExtResource("1")
+display_name = "FighterA"
+max_health = 100
+walk_speed = 270.0
+backward_walk_speed = 195.0
+jump_force = 630.0
+gravity = 1750.0
+weight = 1.0
+damage_scale = 0.95
+attacks = Array[ExtResource("6")]([ExtResource("2"), ExtResource("3"), ExtResource("4"), ExtResource("5"), ExtResource("7")])
+body_color = Color(0.08, 0.48, 0.95, 1)
+accent_color = Color(1, 0.82, 0.18, 1)
+skin_color = Color(0.89, 0.66, 0.43, 1)
+silhouette_style = "swift"
+animation_sheets = {
+"block": ExtResource("12"),
+"crouch": ExtResource("11"),
+"crouch_block": ExtResource("13"),
+"idle": ExtResource("8"),
+"jump": ExtResource("14"),
+"walk_backward": ExtResource("10"),
+"walk_forward": ExtResource("9")
+}
+animation_fps = {
+"block": 8.0,
+"crouch": 16.0,
+"crouch_block": 8.0,
+"idle": 6.0,
+"jump": 10.0,
+"walk_backward": 10.0,
+"walk_forward": 10.0
+}
+held_animation_ranges = {
+"block": Vector4i(0, 4, 2, 4),
+"crouch": Vector4i(0, 4, 4, 4),
+"crouch_block": Vector4i(0, 4, 2, 4)
+}
+sprite_scale = Vector2(0.35, 0.35)
+sprite_offset = Vector2(0, -78.4)
+

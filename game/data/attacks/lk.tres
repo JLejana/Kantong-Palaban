@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="AttackData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://core/combat/attack_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"lk"
+display_name = "Low Kick"
+input_command = PackedStringArray("lk")
+damage = 8
+startup_frames = 7
+active_frames = 4
+recovery_frames = 10
+hit_stun_frames = 17
+block_stun_frames = 9
+knockback = Vector2(205, 0)
+attack_height = "low"
+hitbox_size = Vector2(82, 36)
+hitbox_offset = Vector2(62, -27)
+animation_name = &"lk"
+

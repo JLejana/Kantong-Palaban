@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="AttackData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://core/combat/attack_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"forward_rp"
+display_name = "Skyline Strike"
+input_command = PackedStringArray("forward", "rp")
+damage = 13
+startup_frames = 7
+active_frames = 4
+recovery_frames = 14
+hit_stun_frames = 22
+block_stun_frames = 12
+knockback = Vector2(285, 0)
+launch_force = 90.0
+hitbox_size = Vector2(104, 42)
+hitbox_offset = Vector2(76, -62)
+animation_name = &"skyline_strike"

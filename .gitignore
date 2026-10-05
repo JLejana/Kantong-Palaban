@@ -1,0 +1,13 @@
+.godot/
+game/.godot/
+server/node_modules/
+server/dist/
+server/.env
+.env
+!.env.example
+!**/.env.example
+build/
+*.tmp
+*.log
+.DS_Store
+

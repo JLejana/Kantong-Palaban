@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="AttackData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://core/combat/attack_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"rp"
+display_name = "Right Punch"
+input_command = PackedStringArray("rp")
+damage = 10
+startup_frames = 9
+active_frames = 4
+recovery_frames = 12
+hit_stun_frames = 20
+block_stun_frames = 11
+knockback = Vector2(245, 0)
+hitbox_size = Vector2(78, 48)
+hitbox_offset = Vector2(62, -60)
+animation_name = &"rp"
+

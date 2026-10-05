@@ -1,0 +1,224 @@
+[gd_scene format=3 uid="uid://c0wosqtt13vb8"]
+
+[ext_resource type="Script" uid="uid://4hkcbjjamx5h" path="res://match/fight_controller.gd" id="1"]
+[ext_resource type="PackedScene" path="res://stages/barangay_court/barangay_court.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://fighters/fighter_a/fighter_a.tscn" id="3"]
+[ext_resource type="PackedScene" path="res://fighters/fighter_b/fighter_b.tscn" id="4"]
+[ext_resource type="Script" uid="uid://chnbgasiljdto" path="res://match/round_manager.gd" id="5"]
+[ext_resource type="PackedScene" path="res://ui/mobile_controls/mobile_controls.tscn" id="6"]
+[ext_resource type="Script" path="res://multiplayer/rollback/rollback_manager.gd" id="7"]
+
+[node name="FightScene" type="Node2D" unique_id=999709786]
+script = ExtResource("1")
+
+[node name="BarangayCourt" parent="." unique_id=775062015 instance=ExtResource("2")]
+
+[node name="FighterA" parent="." unique_id=168318055 instance=ExtResource("3")]
+position = Vector2(340, 548)
+
+[node name="FighterB" parent="." unique_id=1271100935 instance=ExtResource("4")]
+position = Vector2(812, 548)
+
+[node name="RoundManager" type="Node" parent="." unique_id=1866316219]
+script = ExtResource("5")
+
+[node name="RollbackManager" type="Node" parent="."]
+script = ExtResource("7")
+
+[node name="FightCamera" type="Camera2D" parent="."]
+position = Vector2(576, 324)
+enabled = true
+
+[node name="HUD" type="CanvasLayer" parent="." unique_id=1799086950]
+
+[node name="ImpactFlash" type="ColorRect" parent="HUD"]
+mouse_filter = 2
+offset_right = 1152.0
+offset_bottom = 648.0
+color = Color(1, 0.72, 0.2, 0)
+
+[node name="TopShade" type="ColorRect" parent="HUD" unique_id=1130505156]
+offset_right = 1152.0
+offset_bottom = 145.0
+color = Color(0.03, 0.04, 0.07, 0.82)
+
+[node name="PlayerOneName" type="Label" parent="HUD" unique_id=527694280]
+offset_left = 40.0
+offset_top = 10.0
+offset_right = 250.0
+offset_bottom = 36.0
+theme_override_font_sizes/font_size = 21
+text = "FighterA"
+
+[node name="PlayerOneHealth" type="ProgressBar" parent="HUD" unique_id=1196929345]
+offset_left = 40.0
+offset_top = 40.0
+offset_right = 480.0
+offset_bottom = 75.0
+value = 100.0
+show_percentage = false
+
+[node name="PlayerTwoName" type="Label" parent="HUD" unique_id=526360275]
+offset_left = 902.0
+offset_top = 10.0
+offset_right = 1112.0
+offset_bottom = 36.0
+theme_override_font_sizes/font_size = 21
+text = "FighterB"
+horizontal_alignment = 2
+
+[node name="PlayerTwoHealth" type="ProgressBar" parent="HUD" unique_id=1200506301]
+offset_left = 672.0
+offset_top = 40.0
+offset_right = 1112.0
+offset_bottom = 75.0
+value = 100.0
+fill_mode = 1
+show_percentage = false
+
+[node name="TimerLabel" type="Label" parent="HUD" unique_id=802638609]
+offset_left = 526.0
+offset_top = 18.0
+offset_right = 626.0
+offset_bottom = 64.0
+theme_override_font_sizes/font_size = 36
+text = "99"
+horizontal_alignment = 1
+
+[node name="ScoreLabel" type="Label" parent="HUD" unique_id=778627212]
+offset_left = 526.0
+offset_top = 66.0
+offset_right = 626.0
+offset_bottom = 98.0
+theme_override_font_sizes/font_size = 20
+text = "0  -  0"
+horizontal_alignment = 1
+
+[node name="PlayerOneControls" type="Label" parent="HUD"]
+offset_left = 40.0
+offset_top = 80.0
+offset_right = 500.0
+offset_bottom = 140.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.92, 0.95, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.9)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_font_sizes/font_size = 13
+text = "P1  MOVE A/D  |  JUMP W  |  CROUCH S\nLP U  |  RP I  |  LK J  |  RK K  |  BLOCK L\nSPECIAL FORWARD+I  |  LOW GUARD S+L"
+
+[node name="PlayerTwoControls" type="Label" parent="HUD"]
+offset_left = 652.0
+offset_top = 80.0
+offset_right = 1112.0
+offset_bottom = 140.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.92, 0.95, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.9)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_font_sizes/font_size = 13
+text = "P2  MOVE LEFT/RIGHT  |  JUMP UP  |  CROUCH DOWN\nLP 1  |  RP 2  |  LK 3  |  RK 4  |  BLOCK 0\nSPECIAL FORWARD+2  |  LOW GUARD DOWN+0"
+horizontal_alignment = 2
+
+[node name="PlayerOneCombo" type="Label" parent="HUD"]
+visible = false
+offset_left = 54.0
+offset_top = 170.0
+offset_right = 260.0
+offset_bottom = 232.0
+theme_override_colors/font_color = Color(1, 0.84, 0.22, 1)
+theme_override_font_sizes/font_size = 23
+text = "2 HITS\n10 DAMAGE"
+
+[node name="PlayerTwoCombo" type="Label" parent="HUD"]
+visible = false
+offset_left = 892.0
+offset_top = 170.0
+offset_right = 1098.0
+offset_bottom = 232.0
+theme_override_colors/font_color = Color(1, 0.84, 0.22, 1)
+theme_override_font_sizes/font_size = 23
+text = "2 HITS\n10 DAMAGE"
+horizontal_alignment = 2
+
+[node name="StatusLabel" type="Label" parent="HUD" unique_id=761606174]
+offset_left = 326.0
+offset_top = 145.0
+offset_right = 826.0
+offset_bottom = 225.0
+theme_override_colors/font_color = Color(1, 0.87, 0.22, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.8)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_font_sizes/font_size = 48
+text = "3"
+horizontal_alignment = 1
+
+[node name="TrainingPanel" type="ColorRect" parent="HUD"]
+visible = false
+offset_left = 780.0
+offset_top = 158.0
+offset_right = 1134.0
+offset_bottom = 438.0
+mouse_filter = 2
+color = Color(0.025, 0.035, 0.065, 0.88)
+
+[node name="SkillList" type="Label" parent="HUD/TrainingPanel"]
+offset_left = 14.0
+offset_top = 10.0
+offset_right = 340.0
+offset_bottom = 270.0
+theme_override_colors/font_color = Color(0.94, 0.96, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.9)
+theme_override_constants/line_spacing = 3
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_font_sizes/font_size = 15
+text = "CHARACTER MOVE LIST"
+
+[node name="ModeLabel" type="Label" parent="HUD" unique_id=1769142047]
+offset_left = 22.0
+offset_top = 604.0
+offset_right = 320.0
+offset_bottom = 638.0
+text = "P1 VS CPU"
+
+[node name="HelpLabel" type="Label" parent="HUD" unique_id=1617006524]
+offset_left = 570.0
+offset_top = 574.0
+offset_right = 1132.0
+offset_bottom = 638.0
+theme_override_font_sizes/font_size = 13
+text = "GAMEPAD: MOVE STICK/D-PAD | LP X | RP Y | LK A | RK B | BLOCK RB\nF6 DEBUG | F7 CPU/P2 | R RESTART | ESC MENU"
+horizontal_alignment = 2
+
+[node name="PingLabel" type="Label" parent="HUD"]
+visible = false
+offset_left = 1020.0
+offset_top = 118.0
+offset_right = 1136.0
+offset_bottom = 148.0
+text = "-- ms"
+horizontal_alignment = 2
+
+[node name="BackButton" type="Button" parent="HUD"]
+offset_left = 1032.0
+offset_top = 154.0
+offset_right = 1136.0
+offset_bottom = 194.0
+text = "MENU"
+
+[node name="DebugLabel" type="Label" parent="HUD" unique_id=344891779]
+offset_left = 16.0
+offset_top = 120.0
+offset_right = 630.0
+offset_bottom = 210.0
+theme_override_colors/font_color = Color(0.9, 1, 0.3, 1)
+theme_override_font_sizes/font_size = 14
+
+[node name="MobileControls" parent="HUD" unique_id=748842284 instance=ExtResource("6")]
+offset_left = 4.0
+offset_top = -6.0
+offset_right = 4.0
+offset_bottom = -6.0

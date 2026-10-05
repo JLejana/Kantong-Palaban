@@ -1,0 +1,6 @@
+[gd_scene format=3]
+
+[node name="Timer" type="Label"]
+text = "99"
+horizontal_alignment = 1
+

@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="FighterStats" load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://fighters/base/fighter_stats.gd" id="1"]
+[ext_resource type="Resource" path="res://data/attacks/lp.tres" id="2"]
+[ext_resource type="Resource" path="res://data/attacks/rp.tres" id="3"]
+[ext_resource type="Resource" path="res://data/attacks/lk.tres" id="4"]
+[ext_resource type="Resource" path="res://data/attacks/rk.tres" id="5"]
+[ext_resource type="Script" path="res://core/combat/attack_data.gd" id="6"]
+[ext_resource type="Resource" path="res://fighters/fighter_b/court_crusher.tres" id="7"]
+
+[resource]
+script = ExtResource("1")
+display_name = "FighterB"
+max_health = 110
+walk_speed = 245.0
+backward_walk_speed = 180.0
+jump_force = 600.0
+gravity = 1700.0
+weight = 1.1
+damage_scale = 1.1
+attacks = Array[ExtResource("6")]([ExtResource("2"), ExtResource("3"), ExtResource("4"), ExtResource("5"), ExtResource("7")])
+body_color = Color(0.82, 0.12, 0.15, 1)
+accent_color = Color(0.12, 0.12, 0.16, 1)
+skin_color = Color(0.55, 0.32, 0.2, 1)
+silhouette_style = "power"
+

@@ -1,0 +1,7 @@
+[gd_scene format=3]
+
+[node name="HealthBar" type="ProgressBar"]
+custom_minimum_size = Vector2(420, 34)
+value = 100.0
+show_percentage = false
+
