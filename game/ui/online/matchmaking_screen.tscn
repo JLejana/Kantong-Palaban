@@ -22,10 +22,10 @@ color = Color(0.035, 0.055, 0.105, 1)
 
 [node name="Layout" type="VBoxContainer" parent="."]
 offset_left = 251.0
-offset_top = 34.0
+offset_top = 20.0
 offset_right = 901.0
-offset_bottom = 626.0
-theme_override_constants/separation = 9
+offset_bottom = 628.0
+theme_override_constants/separation = 7
 
 [node name="Title" type="Label" parent="Layout"]
 layout_mode = 2
@@ -56,14 +56,15 @@ secret = true
 [node name="AuthButtons" type="HBoxContainer" parent="Layout"]
 layout_mode = 2
 theme_override_constants/separation = 8
+alignment = 1
 
-[node name="Login" type="Button" parent="Layout"]
-custom_minimum_size = Vector2(0, 42)
+[node name="Login" type="Button" parent="Layout/AuthButtons"]
+custom_minimum_size = Vector2(240, 42)
 layout_mode = 2
 text = "LOGIN"
 
-[node name="Register" type="Button" parent="Layout"]
-custom_minimum_size = Vector2(0, 42)
+[node name="Register" type="Button" parent="Layout/AuthButtons"]
+custom_minimum_size = Vector2(240, 42)
 layout_mode = 2
 text = "REGISTER"
 
@@ -96,5 +97,5 @@ text = "PRIVATE LOBBY"
 [node name="Back" type="Button" parent="Layout"]
 custom_minimum_size = Vector2(0, 42)
 layout_mode = 2
-text = "BACK"
+text = "BACK TO MAIN MENU"
 

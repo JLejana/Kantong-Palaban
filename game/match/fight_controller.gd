@@ -1,5 +1,16 @@
 extends Node2D
 
+const STAGE_SCENES := {
+	&"barangay_court": preload("res://stages/barangay_court/barangay_court.tscn"),
+	&"halls_of_justice": preload("res://stages/halls_of_justice/halls_of_justice.tscn"),
+	&"luneta_sunset": preload("res://stages/luneta_sunset/luneta_sunset.tscn")
+}
+const HEALTH_FULL_COLOR := Color("28c76f")
+const HEALTH_MID_COLOR := Color("f6c344")
+const HEALTH_EMPTY_COLOR := Color("e63946")
+const HEALTH_COLOR_TRANSITION_SECONDS := 0.35
+
+@onready var stage_root: Node2D = $StageRoot
 @onready var player_one: Fighter = $FighterA
 @onready var player_two: Fighter = $FighterB
 @onready var round_manager: RoundManager = $RoundManager
@@ -26,9 +37,16 @@ var network_frame: int = 0
 var match_started_at: int = 0
 var shake_time: float = 0.0
 var shake_strength: float = 0.0
+var player_one_health_style: StyleBoxFlat
+var player_two_health_style: StyleBoxFlat
+var player_one_health_tween: Tween
+var player_two_health_tween: Tween
 
 func _ready() -> void:
+	_load_selected_stage()
 	_configure_selected_fighters()
+	player_one_health_style = _configure_health_bar(player_one_health)
+	player_two_health_style = _configure_health_bar(player_two_health)
 	player_one.opponent = player_two
 	player_two.opponent = player_one
 	_configure_mode()
@@ -52,6 +70,10 @@ func _ready() -> void:
 	match_started_at = Time.get_ticks_msec()
 	round_manager.configure(player_one, player_two)
 	_refresh_training_panel()
+
+func _load_selected_stage() -> void:
+	var stage_scene := STAGE_SCENES.get(GameManager.selected_stage, STAGE_SCENES[&"barangay_court"]) as PackedScene
+	stage_root.add_child(stage_scene.instantiate())
 
 func _process(delta: float) -> void:
 	_update_camera_shake(delta)
@@ -91,10 +113,42 @@ func _physics_process(_delta: float) -> void:
 func _on_player_one_health(current: int, maximum: int) -> void:
 	player_one_health.max_value = maximum
 	player_one_health.value = current
+	player_one_health_tween = _animate_health_color(player_one_health_style, player_one_health_tween, current, maximum)
 
 func _on_player_two_health(current: int, maximum: int) -> void:
 	player_two_health.max_value = maximum
 	player_two_health.value = current
+	player_two_health_tween = _animate_health_color(player_two_health_style, player_two_health_tween, current, maximum)
+
+func _configure_health_bar(bar: ProgressBar) -> StyleBoxFlat:
+	var background := StyleBoxFlat.new()
+	background.bg_color = Color("20262b")
+	_set_health_bar_corners(background)
+	bar.add_theme_stylebox_override("background", background)
+	var fill := StyleBoxFlat.new()
+	fill.bg_color = HEALTH_FULL_COLOR
+	_set_health_bar_corners(fill)
+	bar.add_theme_stylebox_override("fill", fill)
+	return fill
+
+func _set_health_bar_corners(style: StyleBoxFlat) -> void:
+	style.corner_radius_top_left = 7
+	style.corner_radius_top_right = 7
+	style.corner_radius_bottom_left = 7
+	style.corner_radius_bottom_right = 7
+
+func _animate_health_color(style: StyleBoxFlat, active_tween: Tween, current: int, maximum: int) -> Tween:
+	if is_instance_valid(active_tween):
+		active_tween.kill()
+	var ratio := clampf(float(current) / float(maxi(1, maximum)), 0.0, 1.0)
+	var tween := create_tween()
+	tween.tween_property(style, "bg_color", _health_color(ratio), HEALTH_COLOR_TRANSITION_SECONDS).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	return tween
+
+func _health_color(ratio: float) -> Color:
+	if ratio >= 0.5:
+		return HEALTH_MID_COLOR.lerp(HEALTH_FULL_COLOR, (ratio - 0.5) * 2.0)
+	return HEALTH_EMPTY_COLOR.lerp(HEALTH_MID_COLOR, ratio * 2.0)
 
 func _on_score_changed(first: int, second: int) -> void:
 	score_label.text = "%d  -  %d" % [first, second]

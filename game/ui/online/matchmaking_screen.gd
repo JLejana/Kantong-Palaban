@@ -23,8 +23,8 @@ func _ready() -> void:
 	NetworkManager.match_found.connect(_on_match_found)
 	NetworkManager.request_failed.connect(func(code: String, message: String) -> void: _set_status("%s: %s" % [code, message]))
 	server_url.text = BackendConfig.multiplayer_url
-	$Layout/Login.pressed.connect(func() -> void: _authenticate(&"login"))
-	$Layout/Register.pressed.connect(func() -> void: _authenticate(&"register"))
+	$Layout/AuthButtons/Login.pressed.connect(func() -> void: _authenticate(&"login"))
+	$Layout/AuthButtons/Register.pressed.connect(func() -> void: _authenticate(&"register"))
 	$Layout/Guest.pressed.connect(_connect_as_guest)
 	find_button.pressed.connect(_join_queue)
 	cancel_button.pressed.connect(_cancel_queue)
@@ -33,6 +33,11 @@ func _ready() -> void:
 	find_button.disabled = not NetworkManager.authenticated_session
 	cancel_button.disabled = true
 	_set_status("Sign in or continue as guest. Offline modes never require an account.")
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("ui_cancel"):
+		get_viewport().set_input_as_handled()
+		_go_back()
 
 func _authenticate(action: StringName) -> void:
 	if not supabase.is_configured():
