@@ -11,6 +11,8 @@ const HEALTH_MID_COLOR := Color("f6c344")
 const HEALTH_EMPTY_COLOR := Color("e63946")
 const HEALTH_COLOR_TRANSITION_SECONDS := 0.35
 const DISPLAY_FONT_PATH := "res://ui/fonts/Bangers-Regular.ttf"
+const FIGHTER_INTRO_OFFSET := Vector2(145.0, 22.0)
+const FIGHTER_INTRO_SECONDS := 0.58
 
 @onready var stage_root: Node2D = $StageRoot
 @onready var player_one: Fighter = $FighterA
@@ -36,6 +38,11 @@ const DISPLAY_FONT_PATH := "res://ui/fonts/Bangers-Regular.ttf"
 @onready var round_banner: Control = $HUD/RoundPopup/Banner
 @onready var round_popup_label: Label = $HUD/RoundPopup/Banner/RoundLabel
 @onready var round_popup_subtitle: Label = $HUD/RoundPopup/Banner/Subtitle
+@onready var winner_popup: Control = $HUD/WinnerPopup
+@onready var winner_banner: Control = $HUD/WinnerPopup/Banner
+@onready var winner_header: Label = $HUD/WinnerPopup/Banner/Header
+@onready var winner_label: Label = $HUD/WinnerPopup/Banner/WinnerLabel
+@onready var winner_subtitle: Label = $HUD/WinnerPopup/Banner/Subtitle
 
 var local_fighter: Fighter
 var remote_fighter: Fighter
@@ -48,6 +55,9 @@ var player_two_health_style: StyleBoxFlat
 var player_one_health_tween: Tween
 var player_two_health_tween: Tween
 var round_popup_tween: Tween
+var winner_popup_tween: Tween
+var fighter_intro_tween: Tween
+var fighter_intro_visuals: Dictionary = {}
 var display_font: Font
 
 func _ready() -> void:
@@ -163,10 +173,71 @@ func _configure_round_popup() -> void:
 	title_font.spacing_glyph = 5
 	round_popup_label.add_theme_font_override(&"font", title_font)
 	round_popup_subtitle.add_theme_font_override(&"font", title_font)
+	winner_header.add_theme_font_override(&"font", title_font)
+	winner_label.add_theme_font_override(&"font", title_font)
+	winner_subtitle.add_theme_font_override(&"font", title_font)
 
 func _on_round_started(round_number: int) -> void:
+	_hide_winner_popup()
 	round_popup_label.text = "ROUND %d" % round_number
 	_play_round_popup()
+	if round_number == 1:
+		_play_fighter_intro()
+	else:
+		_restore_fighter_intro()
+
+func _play_fighter_intro() -> void:
+	_restore_fighter_intro()
+	var entrances: Array[Dictionary] = [
+		{"fighter": player_one, "direction": -1.0},
+		{"fighter": player_two, "direction": 1.0}
+	]
+	for entrance: Dictionary in entrances:
+		var fighter := entrance["fighter"] as Fighter
+		var direction := float(entrance["direction"])
+		var visual := fighter.get_active_visual() as Node2D
+		if visual == null:
+			continue
+		var resting_modulate := visual.modulate
+		fighter_intro_visuals[visual] = {
+			"position": visual.position,
+			"scale": visual.scale,
+			"rotation": visual.rotation,
+			"modulate": resting_modulate
+		}
+		visual.position += Vector2(FIGHTER_INTRO_OFFSET.x * direction, FIGHTER_INTRO_OFFSET.y)
+		visual.scale *= 0.72
+		visual.rotation = 0.1 * direction
+		visual.modulate = Color(resting_modulate.r, resting_modulate.g, resting_modulate.b, 0.0)
+
+	fighter_intro_tween = create_tween().set_parallel(true)
+	for visual_variant: Variant in fighter_intro_visuals:
+		var visual := visual_variant as Node2D
+		var resting: Dictionary = fighter_intro_visuals[visual]
+		fighter_intro_tween.tween_property(visual, "position", resting["position"], FIGHTER_INTRO_SECONDS).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		fighter_intro_tween.tween_property(visual, "scale", resting["scale"], FIGHTER_INTRO_SECONDS).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		fighter_intro_tween.tween_property(visual, "rotation", resting["rotation"], 0.42).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		fighter_intro_tween.tween_property(visual, "modulate", resting["modulate"], 0.24).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	fighter_intro_tween.chain().tween_callback(_finish_fighter_intro)
+
+func _finish_fighter_intro() -> void:
+	fighter_intro_tween = null
+	fighter_intro_visuals.clear()
+
+func _restore_fighter_intro() -> void:
+	if is_instance_valid(fighter_intro_tween):
+		fighter_intro_tween.kill()
+	fighter_intro_tween = null
+	for visual_variant: Variant in fighter_intro_visuals:
+		var visual := visual_variant as Node2D
+		if not is_instance_valid(visual):
+			continue
+		var resting: Dictionary = fighter_intro_visuals[visual]
+		visual.position = resting["position"] as Vector2
+		visual.scale = resting["scale"] as Vector2
+		visual.rotation = float(resting["rotation"])
+		visual.modulate = resting["modulate"] as Color
+	fighter_intro_visuals.clear()
 
 func _play_round_popup() -> void:
 	if is_instance_valid(round_popup_tween):
@@ -185,6 +256,31 @@ func _play_round_popup() -> void:
 	round_popup_tween.tween_property(round_popup, "modulate:a", 0.0, 0.22)
 	round_popup_tween.parallel().tween_property(round_banner, "scale", Vector2(1.4, 0.2), 0.22).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN)
 	round_popup_tween.tween_callback(func() -> void: round_popup.visible = false)
+
+func _play_winner_popup(winner: Fighter) -> void:
+	if is_instance_valid(winner_popup_tween):
+		winner_popup_tween.kill()
+	winner_label.text = "%s WINS!" % winner.stats.display_name.to_upper()
+	winner_subtitle.text = "PRESS ESC FOR MENU" if GameManager.game_mode == GameManager.GameMode.ONLINE else "PRESS R TO REMATCH  •  ESC FOR MENU"
+	winner_popup.visible = true
+	winner_popup.modulate = Color(1.0, 1.0, 1.0, 0.0)
+	winner_banner.scale = Vector2(0.08, 0.08)
+	winner_banner.rotation = 0.08
+	winner_subtitle.modulate.a = 0.0
+
+	winner_popup_tween = create_tween()
+	winner_popup_tween.tween_property(winner_popup, "modulate:a", 1.0, 0.16)
+	winner_popup_tween.parallel().tween_property(winner_banner, "scale", Vector2(1.12, 1.12), 0.42).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	winner_popup_tween.parallel().tween_property(winner_banner, "rotation", 0.0, 0.32).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	winner_popup_tween.tween_property(winner_banner, "scale", Vector2.ONE, 0.14).set_trans(Tween.TRANS_SINE)
+	winner_popup_tween.tween_property(winner_subtitle, "modulate:a", 1.0, 0.22)
+	winner_popup_tween.tween_property(winner_subtitle, "modulate:a", 0.45, 0.55).set_trans(Tween.TRANS_SINE)
+	winner_popup_tween.tween_property(winner_subtitle, "modulate:a", 1.0, 0.55).set_trans(Tween.TRANS_SINE)
+
+func _hide_winner_popup() -> void:
+	if is_instance_valid(winner_popup_tween):
+		winner_popup_tween.kill()
+	winner_popup.visible = false
 
 func _animate_health_color(style: StyleBoxFlat, active_tween: Tween, current: int, maximum: int) -> Tween:
 	if is_instance_valid(active_tween):
@@ -263,7 +359,7 @@ func _format_command(command: PackedStringArray) -> String:
 
 func _apply_debug_visibility() -> void:
 	debug_label.visible = GameManager.debug_enabled
-	get_tree().debug_collisions_hint = GameManager.debug_enabled
+	get_tree().debug_collisions_hint = false
 
 func _configure_selected_fighters() -> void:
 	_apply_fighter_selection(player_one, GameManager.selected_player_one)
@@ -377,6 +473,7 @@ func _on_connection_changed(is_connected: bool) -> void:
 		status_label.text = "RECONNECTING…"
 
 func _on_match_finished(winner: Fighter) -> void:
+	_play_winner_popup(winner)
 	if GameManager.game_mode != GameManager.GameMode.ONLINE:
 		return
 	var players: Array = GameManager.online_match.get("players", []) as Array

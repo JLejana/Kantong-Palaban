@@ -26,6 +26,8 @@ func _run() -> void:
 	var player_two_controls := scene.get_node("HUD/PlayerTwoControls") as Label
 	var round_popup := scene.get_node("HUD/RoundPopup") as Control
 	var round_popup_label := scene.get_node("HUD/RoundPopup/Banner/RoundLabel") as Label
+	var winner_popup := scene.get_node("HUD/WinnerPopup") as Control
+	var winner_label := scene.get_node("HUD/WinnerPopup/Banner/WinnerLabel") as Label
 	_assert(loaded_stage.name == &"HallsOfJustice", "selected stage is loaded into the fight")
 	_assert(first.scale.is_equal_approx(Vector2(1.5, 1.5)) and second.scale.is_equal_approx(Vector2(1.5, 1.5)), "fighters use the enlarged gameplay scale")
 	var player_one_fill := player_one_health.get_theme_stylebox("fill") as StyleBoxFlat
@@ -35,6 +37,9 @@ func _run() -> void:
 	_assert("MOVE" in player_two_controls.text and "SPECIAL" in player_two_controls.text, "player two controls are shown on the fight HUD")
 	_assert(rounds.phase == &"round_intro" and rounds.round_number == 1, "the match starts with a locked round-one intro")
 	_assert(round_popup.visible and round_popup_label.text == "ROUND 1", "the arcade popup announces round one")
+	var first_visual := first.get_active_visual() as Node2D
+	var second_visual := second.get_active_visual() as Node2D
+	_assert(first_visual.modulate.a < 1.0 and second_visual.modulate.a < 1.0, "both fighters animate into the opening match")
 	second.ai_controlled = false
 	first.global_position = Vector2(500.0, 548.0)
 	second.global_position = Vector2(585.0, 548.0)
@@ -57,6 +62,13 @@ func _run() -> void:
 	await get_tree().physics_frame
 	_assert(rounds.phase == &"round_intro" and rounds.round_number == 2, "the next fight starts with a locked round-two intro")
 	_assert(round_popup.visible and round_popup_label.text == "ROUND 2", "the arcade popup advances to round two")
+	_assert(is_equal_approx(first_visual.modulate.a, 1.0) and is_equal_approx(second_visual.modulate.a, 1.0), "later rounds restore the fighters without replaying the match entrance")
+	rounds.phase = &"fight"
+	rounds._finish_round(first, "KO!")
+	rounds.phase_time = 0.0
+	await get_tree().physics_frame
+	_assert(rounds.phase == &"match_over" and rounds.player_one_rounds == 2, "the second win finishes the match")
+	_assert(winner_popup.visible and winner_label.text == "FIGHTERA WINS!", "the arcade popup announces the match winner")
 	Input.action_release("p1_rp")
 
 	if failures.is_empty():

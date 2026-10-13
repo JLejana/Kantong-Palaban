@@ -173,7 +173,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-color = Color(0.01, 0.015, 0.04, 0.58)
+color = Color(0.01, 0.015, 0.04, 0)
 
 [node name="Banner" type="Control" parent="HUD/RoundPopup"]
 layout_mode = 0
@@ -183,22 +183,6 @@ offset_right = 1022.0
 offset_bottom = 425.0
 pivot_offset = Vector2(446, 110)
 mouse_filter = 2
-
-[node name="Shadow" type="Polygon2D" parent="HUD/RoundPopup/Banner"]
-polygon = PackedVector2Array(26, 28, 886, 8, 860, 220, 4, 238)
-color = Color(0.05, 0.015, 0.025, 0.9)
-
-[node name="Frame" type="Polygon2D" parent="HUD/RoundPopup/Banner"]
-polygon = PackedVector2Array(8, 8, 884, 8, 856, 212, 36, 212)
-color = Color(1, 0.72, 0.12, 1)
-
-[node name="Face" type="Polygon2D" parent="HUD/RoundPopup/Banner"]
-polygon = PackedVector2Array(22, 19, 870, 19, 844, 201, 47, 201)
-color = Color(0.55, 0.045, 0.075, 0.97)
-
-[node name="TopHighlight" type="Polygon2D" parent="HUD/RoundPopup/Banner"]
-polygon = PackedVector2Array(29, 28, 861, 28, 858, 38, 32, 38)
-color = Color(1, 0.37, 0.2, 0.95)
 
 [node name="RoundLabel" type="Label" parent="HUD/RoundPopup/Banner"]
 layout_mode = 0
@@ -231,6 +215,85 @@ theme_override_colors/font_outline_color = Color(0.15, 0.02, 0.035, 1)
 theme_override_constants/outline_size = 3
 theme_override_font_sizes/font_size = 24
 text = "GET READY!"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="WinnerPopup" type="Control" parent="HUD"]
+visible = false
+z_index = 110
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Dimmer" type="ColorRect" parent="HUD/WinnerPopup"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.008, 0.012, 0.035, 0)
+
+[node name="Banner" type="Control" parent="HUD/WinnerPopup"]
+layout_mode = 0
+offset_left = 110.0
+offset_top = 170.0
+offset_right = 1042.0
+offset_bottom = 470.0
+pivot_offset = Vector2(466, 150)
+mouse_filter = 2
+
+[node name="Header" type="Label" parent="HUD/WinnerPopup/Banner"]
+layout_mode = 0
+offset_left = 110.0
+offset_top = 38.0
+offset_right = 822.0
+offset_bottom = 86.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 0.84, 0.28, 1)
+theme_override_colors/font_outline_color = Color(0.12, 0.015, 0.03, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 26
+text = "MATCH WINNER"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="WinnerLabel" type="Label" parent="HUD/WinnerPopup/Banner"]
+layout_mode = 0
+offset_left = 55.0
+offset_top = 83.0
+offset_right = 877.0
+offset_bottom = 205.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 0.9, 0.34, 1)
+theme_override_colors/font_outline_color = Color(0.55, 0.035, 0.06, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.95)
+theme_override_constants/outline_size = 7
+theme_override_constants/shadow_offset_x = 5
+theme_override_constants/shadow_offset_y = 7
+theme_override_constants/shadow_outline_size = 3
+theme_override_font_sizes/font_size = 68
+text = "FIGHTER A WINS!"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Subtitle" type="Label" parent="HUD/WinnerPopup/Banner"]
+layout_mode = 0
+offset_left = 90.0
+offset_top = 213.0
+offset_right = 842.0
+offset_bottom = 263.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.83, 0.92, 1, 1)
+theme_override_colors/font_outline_color = Color(0.01, 0.02, 0.06, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 21
+text = "PRESS R TO REMATCH  •  ESC FOR MENU"
 horizontal_alignment = 1
 vertical_alignment = 1
 
