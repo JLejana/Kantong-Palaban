@@ -3,12 +3,14 @@ extends Node2D
 const STAGE_SCENES := {
 	&"barangay_court": preload("res://stages/barangay_court/barangay_court.tscn"),
 	&"halls_of_justice": preload("res://stages/halls_of_justice/halls_of_justice.tscn"),
-	&"luneta_sunset": preload("res://stages/luneta_sunset/luneta_sunset.tscn")
+	&"luneta_sunset": preload("res://stages/luneta_sunset/luneta_sunset.tscn"),
+	&"mayon_summit": preload("res://stages/mayon_summit/mayon_summit.tscn")
 }
 const HEALTH_FULL_COLOR := Color("28c76f")
 const HEALTH_MID_COLOR := Color("f6c344")
 const HEALTH_EMPTY_COLOR := Color("e63946")
 const HEALTH_COLOR_TRANSITION_SECONDS := 0.35
+const DISPLAY_FONT_PATH := "res://ui/fonts/Bangers-Regular.ttf"
 
 @onready var stage_root: Node2D = $StageRoot
 @onready var player_one: Fighter = $FighterA
@@ -30,6 +32,10 @@ const HEALTH_COLOR_TRANSITION_SECONDS := 0.35
 @onready var mobile_controls: Control = $HUD/MobileControls
 @onready var fight_camera: Camera2D = $FightCamera
 @onready var impact_flash: ColorRect = $HUD/ImpactFlash
+@onready var round_popup: Control = $HUD/RoundPopup
+@onready var round_banner: Control = $HUD/RoundPopup/Banner
+@onready var round_popup_label: Label = $HUD/RoundPopup/Banner/RoundLabel
+@onready var round_popup_subtitle: Label = $HUD/RoundPopup/Banner/Subtitle
 
 var local_fighter: Fighter
 var remote_fighter: Fighter
@@ -41,6 +47,8 @@ var player_one_health_style: StyleBoxFlat
 var player_two_health_style: StyleBoxFlat
 var player_one_health_tween: Tween
 var player_two_health_tween: Tween
+var round_popup_tween: Tween
+var display_font: Font
 
 func _ready() -> void:
 	_load_selected_stage()
@@ -59,6 +67,7 @@ func _ready() -> void:
 	round_manager.status_changed.connect(func(text: String) -> void: status_label.text = text)
 	round_manager.timer_changed.connect(func(value: int) -> void: timer_label.text = str(value))
 	round_manager.score_changed.connect(_on_score_changed)
+	round_manager.round_started.connect(_on_round_started)
 	round_manager.match_finished.connect(_on_match_finished)
 	GameManager.settings_changed.connect(_apply_debug_visibility)
 	GameManager.settings_changed.connect(_refresh_control_guide)
@@ -67,6 +76,7 @@ func _ready() -> void:
 	_apply_debug_visibility()
 	_refresh_control_guide()
 	_update_mode_label()
+	_configure_round_popup()
 	match_started_at = Time.get_ticks_msec()
 	round_manager.configure(player_one, player_two)
 	_refresh_training_panel()
@@ -136,6 +146,45 @@ func _set_health_bar_corners(style: StyleBoxFlat) -> void:
 	style.corner_radius_top_right = 7
 	style.corner_radius_bottom_left = 7
 	style.corner_radius_bottom_right = 7
+
+func _configure_round_popup() -> void:
+	var base_font := FontFile.new()
+	if base_font.load_dynamic_font(DISPLAY_FONT_PATH) != OK:
+		var fallback_font := SystemFont.new()
+		fallback_font.font_names = PackedStringArray(["Impact", "Arial Black", "DejaVu Sans"])
+		fallback_font.font_weight = 900
+		fallback_font.font_stretch = 110
+		display_font = fallback_font
+	else:
+		display_font = base_font
+
+	var title_font := FontVariation.new()
+	title_font.base_font = display_font
+	title_font.spacing_glyph = 5
+	round_popup_label.add_theme_font_override(&"font", title_font)
+	round_popup_subtitle.add_theme_font_override(&"font", title_font)
+
+func _on_round_started(round_number: int) -> void:
+	round_popup_label.text = "ROUND %d" % round_number
+	_play_round_popup()
+
+func _play_round_popup() -> void:
+	if is_instance_valid(round_popup_tween):
+		round_popup_tween.kill()
+	round_popup.visible = true
+	round_popup.modulate = Color(1.0, 1.0, 1.0, 0.0)
+	round_banner.scale = Vector2(0.12, 1.35)
+	round_banner.rotation = -0.04
+
+	round_popup_tween = create_tween()
+	round_popup_tween.tween_property(round_popup, "modulate:a", 1.0, 0.1)
+	round_popup_tween.parallel().tween_property(round_banner, "scale", Vector2(1.08, 1.08), 0.24).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	round_popup_tween.parallel().tween_property(round_banner, "rotation", 0.0, 0.24).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	round_popup_tween.tween_property(round_banner, "scale", Vector2.ONE, 0.1).set_trans(Tween.TRANS_SINE)
+	round_popup_tween.tween_interval(0.85)
+	round_popup_tween.tween_property(round_popup, "modulate:a", 0.0, 0.22)
+	round_popup_tween.parallel().tween_property(round_banner, "scale", Vector2(1.4, 0.2), 0.22).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN)
+	round_popup_tween.tween_callback(func() -> void: round_popup.visible = false)
 
 func _animate_health_color(style: StyleBoxFlat, active_tween: Tween, current: int, maximum: int) -> Tween:
 	if is_instance_valid(active_tween):

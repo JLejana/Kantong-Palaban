@@ -1,0 +1,39 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Texture2D" path="res://stages/mayon_summit/sprites/mayon_summit.png" id="1"]
+
+[sub_resource type="RectangleShape2D" id="GroundShape"]
+size = Vector2(1152, 64)
+
+[sub_resource type="RectangleShape2D" id="WallShape"]
+size = Vector2(30, 648)
+
+[node name="MayonSummit" type="Node2D"]
+
+[node name="Background" type="Sprite2D" parent="."]
+z_index = -10
+texture = ExtResource("1")
+position = Vector2(576, 324)
+scale = Vector2(0.688995, 0.688629)
+
+[node name="Ground" type="StaticBody2D" parent="."]
+position = Vector2(576, 580)
+collision_layer = 1
+collision_mask = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Ground"]
+shape = SubResource("GroundShape")
+
+[node name="LeftWall" type="StaticBody2D" parent="."]
+position = Vector2(-15, 324)
+collision_layer = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="LeftWall"]
+shape = SubResource("WallShape")
+
+[node name="RightWall" type="StaticBody2D" parent="."]
+position = Vector2(1167, 324)
+collision_layer = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="RightWall"]
+shape = SubResource("WallShape")

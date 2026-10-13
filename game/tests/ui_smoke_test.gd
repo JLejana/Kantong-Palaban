@@ -27,6 +27,12 @@ func _run() -> void:
 		await get_tree().process_frame
 		if instance.get_child_count() == 0:
 			failures.append("Scene has no content: " + path)
+		if path == "res://ui/menus/stage_select.tscn":
+			var stage_grid := instance.get_node("Layout/StageGrid") as GridContainer
+			_assert(stage_grid.get_child_count() == 4, "stage select shows four preview cards")
+			for child in stage_grid.get_children():
+				var preview := child as TextureButton
+				_assert(preview != null and preview.texture_normal != null, "each stage card has a preview thumbnail")
 		instance.queue_free()
 		await get_tree().process_frame
 	if failures.is_empty():
@@ -36,4 +42,8 @@ func _run() -> void:
 		for failure in failures:
 			push_error(failure)
 		get_tree().quit(1)
+
+func _assert(condition: bool, description: String) -> void:
+	if not condition:
+		failures.append("UI_SMOKE_TEST failed: " + description)
 

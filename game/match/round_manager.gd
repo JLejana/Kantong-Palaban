@@ -4,10 +4,12 @@ extends Node
 signal status_changed(text: String)
 signal timer_changed(seconds: int)
 signal score_changed(player_one_rounds: int, player_two_rounds: int)
+signal round_started(round_number: int)
 signal match_finished(winner: Fighter)
 
 @export var round_seconds: int = 99
 @export var rounds_to_win: int = 2
+@export var round_intro_seconds: float = 1.6
 @export var countdown_seconds: float = 3.0
 @export var training_mode: bool = false
 
@@ -17,6 +19,7 @@ var player_one_spawn := Vector2(340.0, 548.0)
 var player_two_spawn := Vector2(812.0, 548.0)
 var player_one_rounds: int = 0
 var player_two_rounds: int = 0
+var round_number: int = 0
 var time_remaining: float = 99.0
 var phase: StringName = &"idle"
 var phase_time: float = 0.0
@@ -32,6 +35,10 @@ func configure(first: Fighter, second: Fighter) -> void:
 
 func _physics_process(delta: float) -> void:
 	match phase:
+		&"round_intro":
+			phase_time -= delta
+			if phase_time <= 0.0:
+				_begin_countdown()
 		&"countdown":
 			phase_time -= delta
 			status_changed.emit(str(maxi(1, int(ceil(phase_time)))))
@@ -65,12 +72,14 @@ func _physics_process(delta: float) -> void:
 func start_match() -> void:
 	player_one_rounds = 0
 	player_two_rounds = 0
+	round_number = 0
 	score_changed.emit(0, 0)
 	_start_round()
 
 func _start_round() -> void:
-	phase = &"fight" if training_mode else &"countdown"
-	phase_time = countdown_seconds
+	round_number += 1
+	phase = &"fight" if training_mode else &"round_intro"
+	phase_time = 0.0 if training_mode else round_intro_seconds
 	time_remaining = float(round_seconds)
 	round_winner = null
 	player_one.reset_for_round(player_one_spawn)
@@ -78,7 +87,14 @@ func _start_round() -> void:
 	player_one.input_enabled = training_mode
 	player_two.input_enabled = false
 	timer_changed.emit(round_seconds)
-	status_changed.emit("TRAINING" if training_mode else "3")
+	status_changed.emit("TRAINING" if training_mode else "")
+	if not training_mode:
+		round_started.emit(round_number)
+
+func _begin_countdown() -> void:
+	phase = &"countdown"
+	phase_time = countdown_seconds
+	status_changed.emit(str(maxi(1, int(ceil(phase_time)))))
 
 func _on_fighter_knocked_out(defeated: Fighter) -> void:
 	if phase != &"fight":
